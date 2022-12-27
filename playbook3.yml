@@ -1,0 +1,21 @@
+- name: Install Apache and upload files to website
+  hosts: redhat_servers
+  become: true
+
+  vars: 
+    source_dir: ./Website/
+    destin_dir: /var/www/html
+  
+  tasks:
+  - name: Install Apache Web server
+    yum: name=httpd state=latest
+
+  - name: Copy homepage to servers
+    copy: src={{ source_dir }} dest={{ destin_dir }} mode=0555
+
+  - name: Enable httpd service and start it on boot
+    service: name=httpd state=started enabled=yes
+
+  handlers:
+  - name: Restart Apache
+    service: name=httpd state=restarted

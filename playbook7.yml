@@ -1,0 +1,19 @@
+- name: My seven'th playbook
+  hosts: all
+  become: true
+
+  vars:
+    mytext: "Privet druzya"
+  
+  tasks:
+  - name: Ping test
+    ping:
+
+  - name: Create folders
+    import_tasks: playbook7-folders.yml
+
+  - name: Create files
+    include_tasks: playbook7-files.yml 
+    vars: 
+      mytext: "Здравствуйте, Друзья!"
+

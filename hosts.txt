@@ -1,0 +1,27 @@
+
+[stage_servers]
+debian ansible_host=####IP ADDRESS### owner=Vasya
+
+[test_servers_web]
+centos ansible_host=####IP ADDRESS### owner=Petya
+
+[test_servers_db]
+ubuntu ansible_host=####IP ADDRESS### owner=Kolya
+
+[test_all:children]
+test_servers_web
+test_servers_db
+
+[stage_all:children]
+stage_servers
+
+[debian_servers:children]
+stage_servers
+test_servers_db
+
+[redhat_servers:children]
+test_servers_web
+
+[all_servers:children]
+test_all
+stage_all

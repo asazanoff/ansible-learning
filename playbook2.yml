@@ -1,0 +1,12 @@
+
+- name: install default Apache Webserver
+  hosts: redhat_servers
+  become: true
+
+  tasks:
+    - name: Install Apache Web server
+      yum: name=httpd state=latest
+
+    - name: Start Apache and Enable on the boot
+      service: name=httpd state=started enabled=yes
+      

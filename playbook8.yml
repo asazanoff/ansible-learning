@@ -1,0 +1,55 @@
+- name: Delegation
+  hosts: all
+ # become: true
+
+  vars:
+    mytext: "Привет! Экспериментируем с делегированием!"
+  
+  tasks:
+
+  - name: Ping servers
+    ping:
+
+  - name: Create directory
+    file:
+      path: ~/myfolder/
+      state: directory
+
+  - name: Unregister server from LoadBalancer
+    shell: echo This server {{ inventory_hostname }} was unregistered from LoadBalancer, node name is {{ ansible_nodename }} >> ~/log.txt
+    delegate_to: localhost
+
+  - name: Update DB's
+    shell: echo Updating DBs
+    run_once: true 
+
+  - name: Create files (1)
+    copy:
+      dest: ~/myfolder/file1.txt
+      content: |
+        This is file1
+        Hi! We are experimenting with Delegation
+        Сообщение на русском: {{ mytext }}
+    delegate_to: centos
+
+  - name: Create files (2)
+    copy: 
+      dest: ~/myfolder/file2.txt
+      content: |
+        Это файл номер два
+        Хороший файл
+        Сообщение на русском гласит: {{ mytext }}
+  
+  - name: Reboot servers
+    shell: sleep 3 && reboot now
+    async: 1
+    poll: 0
+    become: true
+
+  - name: Wait till my servers woke up
+    wait_for: 
+      host: "{{ inventory_hostname }}"
+      state: started
+      delay: 5
+      timeout: 40
+    delegate_to: localhost

@@ -1,0 +1,30 @@
+- name: My super playbook for Variables Lesson
+  hosts: all
+  become: true
+
+  vars: 
+    message1: "Privet"
+    message2: "World"
+    message3: "NE PRIVET YAAAAARRRR"
+
+  tasks:
+  - name: Print secret Variables
+    debug: 
+      var: message3
+
+  - debug:
+      msg: "Секретное слово: {{ message3 }}"
+
+  - debug:
+      msg: "Владелец этого сервера --> {{ owner }} <--"
+
+  - set_fact: full_message="{{ message1 }} {{ message2 }} from {{ owner }} on {{ ansible_os_family }} ({{ ansible_distribution }})"
+  - debug:
+      msg: "{{ full_message }}"
+
+
+  - shell: uptime
+    register: uptimeoutput
+
+  - debug: 
+      var: uptimeoutput.stdout

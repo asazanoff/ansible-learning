@@ -1,0 +1,22 @@
+- name: Ansible lesson 9 -- errors
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Task1
+    yum: name=treeee state=latest
+    ignore_errors: true
+
+  - name: Task2
+    shell: echo Hello World!
+    register: results
+#    failed_when: "'World' in results.stdout"
+    failed_when: results.rc 0= 0
+
+
+  - debug:
+      var: results
+
+
+  - name: Task3
+    shell: echo PRRRIIIVVVEEEEETTTTT

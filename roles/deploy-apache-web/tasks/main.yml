@@ -1,0 +1,24 @@
+---
+# tasks file for deploy-apache-web
+  - name: Check and print Linux version
+    debug: var=ansible_os_family
+
+  - block: #Block for Redhat
+    - name: Install Apache Web server for RedHat
+      yum: name=httpd state=latest
+    - name: Enable httpd service and start it on boot (Redhat)
+      service: name=httpd state=started enabled=yes
+    when: ansible_os_family == "RedHat"
+
+  - block: #Block for Debian
+    - name: Install Apache Web server for Debian
+      apt: name=apache2 state=latest
+    - name: Enable httpd service and start it on boot (Debian)
+      service: name=apache2 state=started enabled=yes
+    when: ansible_os_family == "Debian"
+
+  - name: Copy homepage to servers
+    copy: src=./ dest={{ destin_dir }} mode=0555
+
+  - name: Generate webpage files
+    template: src=index.j2 dest={{ destin_dir }}/index.html mode=0555
